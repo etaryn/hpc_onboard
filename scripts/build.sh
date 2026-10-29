@@ -57,5 +57,7 @@ ARCHIVER = ar
 ARFLAGS = r
 RANLIB = echo
 EOF
-make -j16 arch=soc
+# HPL's recursive makefiles race under -j, so build it serially
+make clean arch=soc >/dev/null 2>&1 || true
+make arch=soc
 test -x bin/soc/xhpl
