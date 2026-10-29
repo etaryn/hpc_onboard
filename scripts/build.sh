@@ -15,15 +15,17 @@ mkdir -p "$B" && cd "$B"
 if [ ! -f blis/lib/libblis-mt.a ]; then
   curl -fsSL -o blis-$BLIS_VER.tar.gz https://github.com/amd/blis/archive/refs/tags/$BLIS_VER.tar.gz
   tar xzf blis-$BLIS_VER.tar.gz
-  (cd blis-$BLIS_VER && ./configure -t openmp --enable-cblas --prefix="$B/blis" amdzen && make -j16 && make install)
+  (cd blis-$BLIS_VER && ./configure -t openmp --enable-cblas --prefix="$B/blis" amdzen && make -j32 && make install)
 fi
 
 # --- Open MPI: the system one (Debian, PMIx 5) segfaults / loses its daemons on the xcn nodes.
 # Bundled PMIx/hwloc/libevent avoid the system libpmix. HPL is rebuilt against it below.
 if [ ! -x ompi/bin/mpirun ]; then
-  curl -fsSL -o openmpi-$OMPI_VER.tar.gz https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
-  tar xzf openmpi-$OMPI_VER.tar.gz
-  (cd openmpi-$OMPI_VER && ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal      --with-hwloc=internal --with-libevent=internal --without-verbs --without-ucx      --disable-mpi-fortran --disable-mpi-cxx && make -j16 && make install)
+  W=$(mktemp -d)                        # compile on the node's local disk; $HOME is a slow network FS
+  trap 'rm -rf "$W"' EXIT
+  curl -fsSL -o "$W/openmpi.tar.gz" https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
+  tar xzf "$W/openmpi.tar.gz" -C "$W"
+  (cd "$W/openmpi-$OMPI_VER" && ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal      --with-hwloc=internal --with-libevent=internal --without-verbs --without-ucx      --disable-mpi-fortran --disable-mpi-cxx && make -j32 && make install)
   rm -rf hpl-$HPL_VER
 fi
 export PATH="$B/ompi/bin:$PATH"

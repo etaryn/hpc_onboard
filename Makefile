@@ -5,7 +5,7 @@ XHPL := build/hpl-2.3/bin/soc/xhpl
 all: $(XHPL)
 
 $(XHPL):
-	srun -p normal -N 1 -n 1 -c 16 --constraint=xcni --time=00:30:00 bash scripts/build.sh
+	srun -p normal -N 1 -n 1 -c 32 --constraint=xcni --time=01:00:00 bash scripts/build.sh
 
 run: all
 	bash scripts/run.sh
