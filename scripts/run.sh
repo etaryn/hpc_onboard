@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs HPL on an x86 xcn class (xcni) and blocks until done. Output (incl. result table) goes to stdout.
+# Runs HPL on an x86 xcn class (xcni), blocks until the job ends, then prints its output.
 # Tuning knobs are env overrides, e.g.:  NODES=1 HPLDAT=config/test.dat make run
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -12,6 +12,9 @@ TLIMIT=${TLIMIT:-02:00:00}
 
 mkdir -p logs
 cp "$HPLDAT" build/hpl-2.3/bin/soc/HPL.dat
-cd build/hpl-2.3/bin/soc
-srun -p normal -N "$NODES" -n $((NODES * RPN)) --ntasks-per-node="$RPN" --constraint=xcni \
-     --mpi=pmix --cpu-bind=cores --time="$TLIMIT" ./xhpl
+echo "submitting HPL job ($NODES node(s) x $RPN ranks, $HPLDAT); waiting for it to finish..." >&2
+rc=0
+jid=$(sbatch --parsable --wait -p normal -N "$NODES" --ntasks-per-node="$RPN" --constraint=xcni \
+      --time="$TLIMIT" -o logs/hpl-%j.out scripts/run_hpl.slurm) || rc=$?
+cat "logs/hpl-${jid%%;*}.out"
+exit $rc

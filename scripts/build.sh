@@ -4,6 +4,7 @@
 set -euo pipefail
 
 HPL_VER=2.3
+OMPI_VER=4.1.6
 BLIS_VER=5.0          # amd/blis tag; if the tag 404s, check https://github.com/amd/blis/tags
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -16,6 +17,16 @@ if [ ! -f blis/lib/libblis-mt.a ]; then
   tar xzf blis-$BLIS_VER.tar.gz
   (cd blis-$BLIS_VER && ./configure -t openmp --enable-cblas --prefix="$B/blis" amdzen && make -j16 && make install)
 fi
+
+# --- Open MPI: the system one (Debian, PMIx 5) segfaults / loses its daemons on the xcn nodes.
+# Bundled PMIx/hwloc/libevent avoid the system libpmix. HPL is rebuilt against it below.
+if [ ! -x ompi/bin/mpirun ]; then
+  curl -fsSL -o openmpi-$OMPI_VER.tar.gz https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
+  tar xzf openmpi-$OMPI_VER.tar.gz
+  (cd openmpi-$OMPI_VER && ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal      --with-hwloc=internal --with-libevent=internal --without-verbs --without-ucx      --disable-mpi-fortran --disable-mpi-cxx && make -j16 && make install)
+  rm -rf hpl-$HPL_VER
+fi
+export PATH="$B/ompi/bin:$PATH"
 
 # --- HPL
 if [ ! -d hpl-$HPL_VER ]; then
@@ -48,10 +59,10 @@ HPL_OPTS = -DHPL_CALL_CBLAS
 HPL_INCLUDES = -I\$(INCdir) -I\$(INCdir)/\$(ARCH) \$(LAinc) \$(MPinc)
 HPL_LIBS = \$(HPLlib) \$(LAlib) \$(MPlib)
 HPL_DEFS = \$(F2CDEFS) \$(HPL_OPTS) \$(HPL_INCLUDES)
-CC = mpicc
+CC = $B/ompi/bin/mpicc
 CCNOOPT = \$(HPL_DEFS)
 CCFLAGS = \$(HPL_DEFS) -O3 -fopenmp
-LINKER = mpicc
+LINKER = $B/ompi/bin/mpicc
 LINKFLAGS = \$(CCFLAGS)
 ARCHIVER = ar
 ARFLAGS = r
