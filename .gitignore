@@ -1,0 +1,17 @@
+# HPL source tarballs and build output (rebuilt by `make`)
+*.tar.gz
+hpl-*/
+build/
+bin/
+*.o
+*.a
+
+# Slurm / run output: keep summaries in RESULTS.md, not raw logs
+logs/
+slurm-*.out
+*.err
+
+# Editor / OS junk
+.vscode/
+.DS_Store
+Thumbs.db
