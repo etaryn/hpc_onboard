@@ -26,15 +26,13 @@ if [ ! -x ompi/bin/mpirun ]; then
   curl -fsSL -o "$W/openmpi.tar.gz" https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
   tar xzf "$W/openmpi.tar.gz" -C "$W"
   (cd "$W/openmpi-$OMPI_VER" && ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal      --with-hwloc=internal --with-libevent=internal --without-verbs --without-ucx      --disable-mpi-fortran --disable-mpi-cxx && make -j32 && make install)
-  rm -rf hpl-$HPL_VER
 fi
 export PATH="$B/ompi/bin:$PATH"
 
-# --- HPL
-if [ ! -d hpl-$HPL_VER ]; then
-  curl -fsSL -o hpl-$HPL_VER.tar.gz https://netlib.org/benchmark/hpl/hpl-$HPL_VER.tar.gz
-  tar xzf hpl-$HPL_VER.tar.gz
-fi
+# --- HPL (always from a fresh tree: no recursive `make clean`, which is slow on the network FS)
+rm -rf hpl-$HPL_VER
+[ -f hpl-$HPL_VER.tar.gz ] || curl -fsSL -o hpl-$HPL_VER.tar.gz https://netlib.org/benchmark/hpl/hpl-$HPL_VER.tar.gz
+tar xzf hpl-$HPL_VER.tar.gz
 cd hpl-$HPL_VER
 cat > Make.soc <<EOF
 SHELL = /bin/sh
@@ -71,6 +69,5 @@ ARFLAGS = r
 RANLIB = echo
 EOF
 # HPL's recursive makefiles race under -j, so build it serially
-make clean arch=soc >/dev/null 2>&1 || true
 make arch=soc
 test -x bin/soc/xhpl
