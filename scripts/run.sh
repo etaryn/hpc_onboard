@@ -14,7 +14,7 @@ mkdir -p logs
 cp "$HPLDAT" build/hpl-2.3/bin/soc/HPL.dat
 echo "submitting HPL job ($NODES node(s) x $RPN ranks, $HPLDAT); waiting for it to finish..." >&2
 rc=0
-jid=$(sbatch --parsable --wait -p normal -N "$NODES" --ntasks-per-node="$RPN" -c 2 --constraint=xcni \
+jid=$(sbatch --parsable --wait -p normal -N "$NODES" --ntasks-per-node="$RPN" -c 2 --mem=0 --constraint=xcni \
       --time="$TLIMIT" -o logs/hpl-%j.out scripts/run_hpl.slurm) || rc=$?
 cat "logs/hpl-${jid%%;*}.out"
 exit $rc
