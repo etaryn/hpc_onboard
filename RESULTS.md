@@ -13,3 +13,8 @@
 | 9 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 4x16 | 46080 | 384 | grid sweep, other knobs as #1 | 19.92 | 3274.0 | 45.0 | PASSED (3.03730013e-03) | job id not captured |
 | 10 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 16x4 | 46080 | 384 | grid sweep, other knobs as #1 | 27.19 | 2399.5 | 33.0 | PASSED (3.33896545e-03) | job id not captured |
 | 11 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 2x32 | 46080 | 384 | grid sweep, other knobs as #1 | 22.33 | 2921.3 | 40.2 | PASSED (3.34813783e-03) | job id not captured |
+| 12 | 2026-10-30 | a7c69c9 | 1 (xcni) | 64x1 | 4x16 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 19.88 | 3281.8 | 45.1 | PASSED (2.84159225e-03) | job id not captured |
+| 13 | 2026-10-30 | a7c69c9 | 1 (xcni) | 32x2 | 4x8 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 18.77 | 3475.9 | 47.8 | PASSED (2.99264417e-03) | job id not captured |
+| 14 | 2026-10-30 | a7c69c9 | 1 (xcni) | 16x4 | 4x4 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 17.62 | 3702.8 | 50.9 | PASSED (3.47203804e-03) | job id not captured |
+| 15 | 2026-10-30 | a7c69c9 | 1 (xcni) | 8x8 | 2x4 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 19.53 | 3340.2 | 45.9 | PASSED (3.63630038e-03) | job id not captured |
+| 16 | 2026-10-30 | a7c69c9 | 1 (xcni) | 2x32 | 1x2 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 29.12 | 2240.5 | 30.8 | PASSED (4.81312856e-03) | job id not captured |
