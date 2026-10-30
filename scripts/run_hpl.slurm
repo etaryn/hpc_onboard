@@ -5,4 +5,5 @@ export LD_LIBRARY_PATH=$B/ompi/lib:$B/blis/lib:$LD_LIBRARY_PATH
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
 cd "$B/hpl-2.3/bin/soc"
 echo "nodes: $SLURM_JOB_NODELIST  ranks: $SLURM_NTASKS  OMP_NUM_THREADS=$OMP_NUM_THREADS"
-"$B/ompi/bin/mpirun" --mca btl_vader_single_copy_mechanism none -np "$SLURM_NTASKS" --bind-to core --map-by core ./xhpl
+export OMP_PLACES=cores OMP_PROC_BIND=close
+"$B/ompi/bin/mpirun" --mca btl_vader_single_copy_mechanism none -x OMP_NUM_THREADS -x OMP_PLACES -x OMP_PROC_BIND -x BLIS_ARCH_DEBUG -np "$SLURM_NTASKS" --map-by slot:PE=$OMP_NUM_THREADS --bind-to core ./xhpl

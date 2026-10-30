@@ -9,3 +9,7 @@
 | 5 | 2026-10-30 | b93ef0f | 1 (xcni) | 64x1 | 8x8 | 46080 | 320 | NB sweep, other knobs as #1; BLIS picked zen5 | 21.68 | 3009.2 | 41.4 | PASSED (3.11362091e-03) |  (job id not captured) |
 | 6 | 2026-10-30 | b93ef0f | 1 (xcni) | 64x1 | 8x8 | 46080 | 384 | NB sweep, other knobs as #1; BLIS picked zen5 | 20.56 | 3173.3 | 43.6 | PASSED (2.78637526e-03) | best NB (job id not captured) |
 | 7 | 2026-10-30 | b93ef0f | 1 (xcni) | 64x1 | 8x8 | 46080 | 512 | NB sweep, other knobs as #1; BLIS picked zen5 | 23.52 | 2773.6 | 38.1 | PASSED (2.95935318e-03) |  (job id not captured) |
+| 8 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 8x8 | 46080 | 384 | grid sweep, other knobs as #1 | 20.87 | 3126.3 | 43.0 | PASSED (2.99187676e-03) | job id not captured |
+| 9 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 4x16 | 46080 | 384 | grid sweep, other knobs as #1 | 19.92 | 3274.0 | 45.0 | PASSED (3.03730013e-03) | job id not captured |
+| 10 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 16x4 | 46080 | 384 | grid sweep, other knobs as #1 | 27.19 | 2399.5 | 33.0 | PASSED (3.33896545e-03) | job id not captured |
+| 11 | 2026-10-30 | 1eb1fb8 | 1 (xcni) | 64x1 | 2x32 | 46080 | 384 | grid sweep, other knobs as #1 | 22.33 | 2921.3 | 40.2 | PASSED (3.34813783e-03) | job id not captured |
