@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 NODES=${NODES:-4}                       # hard limit: <= 4
-RPN=${RPN:-64}                          # MPI ranks per node (xcni: 64 physical cores)
+RPN=${RPN:-64}                          # MPI ranks per node (xcni: 64 physical cores; -c 2 below = one full core incl. HT sibling per rank)
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
 HPLDAT=${HPLDAT:-config/HPL.dat}
 TLIMIT=${TLIMIT:-02:00:00}
@@ -14,7 +14,7 @@ mkdir -p logs
 cp "$HPLDAT" build/hpl-2.3/bin/soc/HPL.dat
 echo "submitting HPL job ($NODES node(s) x $RPN ranks, $HPLDAT); waiting for it to finish..." >&2
 rc=0
-jid=$(sbatch --parsable --wait -p normal -N "$NODES" --ntasks-per-node="$RPN" --exclusive --constraint=xcni \
+jid=$(sbatch --parsable --wait -p normal -N "$NODES" --ntasks-per-node="$RPN" -c 2 --constraint=xcni \
       --time="$TLIMIT" -o logs/hpl-%j.out scripts/run_hpl.slurm) || rc=$?
 cat "logs/hpl-${jid%%;*}.out"
 exit $rc
