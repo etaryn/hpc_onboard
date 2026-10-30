@@ -51,3 +51,10 @@ Assumptions: 12 physical cores/node (ignore HT), 2.4 GHz nominal, AVX2 with 2 FM
 ## TODO
 - Detailed lscpu (clock, ISA flags, NUMA) for the class we choose.
 - Decide node class for the final run (availability vs speed).
+
+## Rpeak for xcni (EPYC 9355, the class we run on)
+Assumptions: 64 cores/node (2 x 32, ignore HT), 3.55 GHz vendor base clock (NOT readable on the node:
+no cpufreq base_frequency; only max boost 4413 MHz is reported), Zen 5 AVX-512 = 32 DP FLOP/cycle/core.
+- 1 node: 64 x 3.55 x 32 = 7270.4 GFLOPS
+- 4 nodes: 29081.6 GFLOPS
+- Real all-core AVX-512 clock may differ; treat % Rpeak as an estimate.
