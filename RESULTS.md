@@ -1,5 +1,8 @@
 # RESULTS
 
+One row per run, failures included. % Rpeak uses Rpeak = 7270.4 GFLOPS/node (assumption, see HARDWARE.md).
+Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before run.sh started printing them.
+
 | # | date | commit | nodes | ranks x threads | P x Q | N | NB | other knobs | time (s) | GFLOPS | % Rpeak | PASSED? | notes |
 |---|------|--------|-------|-----------------|-------|---|----|-------------|----------|--------|---------|---------|-------|
 | 1 | 2026-10-30 | 818d816 | 1 (xcni0) | 64x1 | 8x8 | 10000 | 256 | PFACT=R RFACT=C NBMIN=4 NDIV=2 BCAST=1rM DEPTH=1 SWAP=mix; BLIS 5.0 (amdzen), own OpenMPI 4.1.6 | 0.48 | 1391.3 | tbd (Rpeak for xcni not fixed yet) | PASSED (3.96328737e-03) | correctness run only; many `Read -1, expected 10240, errno = 1` lines from vader CMA (job id not captured) |
@@ -18,3 +21,13 @@
 | 14 | 2026-10-30 | a7c69c9 | 1 (xcni) | 16x4 | 4x4 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 17.62 | 3702.8 | 50.9 | PASSED (3.47203804e-03) | job id not captured |
 | 15 | 2026-10-30 | a7c69c9 | 1 (xcni) | 8x8 | 2x4 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 19.53 | 3340.2 | 45.9 | PASSED (3.63630038e-03) | job id not captured |
 | 16 | 2026-10-30 | a7c69c9 | 1 (xcni) | 2x32 | 1x2 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 29.12 | 2240.5 | 30.8 | PASSED (4.81312856e-03) | job id not captured |
+
+## Failed launch attempts (no HPL output; before run #1)
+| what | symptom | cause / fix |
+|---|---|---|
+| `srun --mpi=pmix` + Debian Open MPI 4.1.6, 64 ranks | segfault in `libpmix.so.2` `pmix_hwloc_setup_topology` | system PMIx unusable; built own Open MPI |
+| same + `PMIX_MCA_gds=hash`, `OMPI_MCA_orte_tmpdir_base=/dev/shm` | `ORTE_ERROR_LOG ... session_dir.c` in MPI_Init | same root cause |
+| `salloc` + Debian `mpirun` | "ORTE has lost communication with a remote daemon" | same root cause |
+| own Open MPI, `--ntasks-per-node=64` (64 of 128 CPUs) | `hwloc_set_cpubind returned "Error" for bitmap "35,99"` | cpuset held one HT sibling only; ask for whole cores (`-c 2`) |
+| `--exclusive` | `Exclusive node access is not permitted` | policy; use `-c` instead |
+| `-c 2` x 64 tasks, default memory | `Requested node configuration is not available` | 3072 MB/CPU x 128 > node RAM; add `--mem=0` |

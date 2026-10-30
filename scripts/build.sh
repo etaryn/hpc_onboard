@@ -1,6 +1,7 @@
 #!/bin/bash
-# Builds AOCL-BLIS (runtime CPU dispatch via the amdzen config) and HPL 2.3 into ./build.
-# Runs on an xcn node (see Makefile). Needs internet for the two tarballs.
+# Builds into ./build: AOCL-BLIS (amdzen = runtime CPU dispatch), our own Open MPI (the system one crashes
+# on the xcn nodes) and HPL 2.3 against both. Runs on an xcn node (see Makefile).
+# Needs internet for the three tarballs (github.com, open-mpi.org, netlib.org).
 set -euo pipefail
 
 HPL_VER=2.3
@@ -25,7 +26,12 @@ if [ ! -x ompi/bin/mpirun ]; then
   trap 'rm -rf "$W"' EXIT
   curl -fsSL -o "$W/openmpi.tar.gz" https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
   tar xzf "$W/openmpi.tar.gz" -C "$W"
-  (cd "$W/openmpi-$OMPI_VER" && ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal      --with-hwloc=internal --with-libevent=internal --without-verbs --without-ucx      --disable-mpi-fortran --disable-mpi-cxx && make -j32 && make install)
+  cd "$W/openmpi-$OMPI_VER"
+  ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal --with-hwloc=internal \
+    --with-libevent=internal --without-verbs --without-ucx --disable-mpi-fortran --disable-mpi-cxx
+  make -j32
+  make install
+  cd "$B"
 fi
 export PATH="$B/ompi/bin:$PATH"
 

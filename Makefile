@@ -1,5 +1,5 @@
-# `make`     builds AOCL-BLIS + HPL 2.3 under ./build (compile runs on an xcn node, not the login node)
-# `make run` runs HPL via srun and blocks until the result table is printed
+# `make`     builds BLIS + Open MPI + HPL 2.3 under ./build (via srun on an xcn node, not the login node)
+# `make run` submits scripts/run_hpl.slurm with `sbatch --wait` and prints the HPL result table
 XHPL := build/hpl-2.3/bin/soc/xhpl
 
 all: $(XHPL)
