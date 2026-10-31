@@ -33,7 +33,7 @@ def table(rows, widths, bold_row=None):
 
 s = []
 s.append(Paragraph("HPL on the NUS SoC Compute Cluster: how I got 8.55 TFLOPS on two nodes", h1))
-s.append(Paragraph("Kent Ridge HPC try-out, Option 1 (software benchmarking). Prepared by Ethan. DRAFT.", cap))
+s.append(Paragraph("Kent Ridge HPC try-out, Option 1 (software benchmarking). Prepared by Bing Heng.", cap))
 s.append(Spacer(1, 4))
 
 s.append(P("<b>Result.</b> The best full-size run, run from the unpacked submission archive (<font face='Courier'>make</font>, then <font face='Courier'>make run</font>), "
@@ -120,5 +120,5 @@ s.append(B("Two jobs of mine overlapped once and one of them silently ran the ot
 s.append(B("On a 10 GbE link, grid shape and hybrid layout mattered more than any HPL algorithm knob. Large N also matters most: the same configuration went from 5.9 to 8.5 TFLOPS between N = 65k and N = 231k."))
 
 SimpleDocTemplate(OUT, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm, topMargin=15 * mm, bottomMargin=14 * mm,
-                  title="HPL on the NUS SoC Compute Cluster", author="Ethan").build(s)
+                  title="HPL on the NUS SoC Compute Cluster", author="Bing Heng").build(s)
 print("ok")
