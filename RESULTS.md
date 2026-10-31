@@ -32,6 +32,12 @@ Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before ru
 | 25 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 320 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 35.50 | 5698.5 | 39.2 | PASSED (2.22407938e-03) | NB sweep, 3% below 384 |
 | 26 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 34.45 | 5873.4 | 40.4 | PASSED (2.59701323e-03) | best NB again (matches run 20 at N=65280: 5900.7) |
 | 27 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 448 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 38.87 | 5205.5 | 35.8 | PASSED (2.42581663e-03) | 11% below 384 |
+| 28 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=0 (1rg); one job 1049307 (WR10C2R4) | 34.53 | 5858.8 | 40.3 | PASSED (2.39574637e-03) | within noise of 1rM |
+| 29 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=1 (1rM); one job 1049307 (WR11C2R4) | 34.16 | 5923.0 | 40.7 | PASSED (2.59029708e-03) | best; current default |
+| 30 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=2 (2rg); one job 1049307 (WR12C2R4) | 35.33 | 5726.6 | 39.4 | PASSED (2.67837801e-03) | 3.3% below 1rM |
+| 31 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=3 (2rM); one job 1049307 (WR13C2R4) | 34.91 | 5795.6 | 39.9 | PASSED (2.32060123e-03) | 2.2% below 1rM |
+| 32 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=4 (Lng); one job 1049307 (WR14C2R4) | 54.94 | 3682.5 | 25.3 | PASSED (2.58090230e-03) | 38% below 1rM |
+| 33 | 2026-10-31 | 0463c2f | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | BCAST=5 (LnM); one job 1049307 (WR15C2R4) | 47.87 | 4226.8 | 29.1 | PASSED (2.58090230e-03) | 29% below 1rM |
 
 ## Failed launch attempts (no HPL output; before run #1)
 | what | symptom | cause / fix |
