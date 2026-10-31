@@ -1,7 +1,8 @@
 #!/bin/bash
 # Builds into ./build: AOCL-BLIS (amdzen = runtime CPU dispatch), our own Open MPI (the system one crashes
 # on the xcn nodes) and HPL 2.3 against both. Runs on an xcn node (see Makefile).
-# Needs internet for the three tarballs (github.com, open-mpi.org, netlib.org).
+# Uses the three source tarballs from dist/ when present (`make archive` puts them there); otherwise downloads them
+# (github.com, open-mpi.org, netlib.org). `bash scripts/build.sh fetch` only fills dist/.
 set -euo pipefail
 
 HPL_VER=2.3
@@ -10,11 +11,27 @@ BLIS_VER=5.0          # amd/blis tag; if the tag 404s, check https://github.com/
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 B=$ROOT/build
+DIST=$ROOT/dist
+BLIS_URL=https://github.com/amd/blis/archive/refs/tags/$BLIS_VER.tar.gz
+OMPI_URL=https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
+HPL_URL=https://netlib.org/benchmark/hpl/hpl-$HPL_VER.tar.gz
+
+# get <file> <url> <dest>: copy from dist/ if shipped there, else download
+get() { if [ -f "$DIST/$1" ]; then cp "$DIST/$1" "$3"; else curl -fsSL -o "$3" "$2"; fi; }
+
+if [ "${1:-}" = fetch ]; then
+  mkdir -p "$DIST"
+  [ -f "$DIST/blis-$BLIS_VER.tar.gz" ]    || curl -fsSL -o "$DIST/blis-$BLIS_VER.tar.gz" "$BLIS_URL"
+  [ -f "$DIST/openmpi-$OMPI_VER.tar.gz" ] || curl -fsSL -o "$DIST/openmpi-$OMPI_VER.tar.gz" "$OMPI_URL"
+  [ -f "$DIST/hpl-$HPL_VER.tar.gz" ]      || curl -fsSL -o "$DIST/hpl-$HPL_VER.tar.gz" "$HPL_URL"
+  exit 0
+fi
+
 mkdir -p "$B" && cd "$B"
 
 # --- BLIS: amdzen = one binary with zen/zen2/zen3/zen4/zen5 kernels chosen at runtime
 if [ ! -f blis/lib/libblis-mt.a ]; then
-  curl -fsSL -o blis-$BLIS_VER.tar.gz https://github.com/amd/blis/archive/refs/tags/$BLIS_VER.tar.gz
+  get blis-$BLIS_VER.tar.gz "$BLIS_URL" blis-$BLIS_VER.tar.gz
   tar xzf blis-$BLIS_VER.tar.gz
   (cd blis-$BLIS_VER && ./configure -t openmp --enable-cblas --prefix="$B/blis" amdzen && make -j32 && make install)
 fi
@@ -24,7 +41,7 @@ fi
 if [ ! -x ompi/bin/mpirun ]; then
   W=$(mktemp -d)                        # compile on the node's local disk; $HOME is a slow network FS
   trap 'rm -rf "$W"' EXIT
-  curl -fsSL -o "$W/openmpi.tar.gz" https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VER.tar.gz
+  get openmpi-$OMPI_VER.tar.gz "$OMPI_URL" "$W/openmpi.tar.gz"
   tar xzf "$W/openmpi.tar.gz" -C "$W"
   cd "$W/openmpi-$OMPI_VER"
   ./configure --prefix="$B/ompi" --with-slurm --with-pmix=internal --with-hwloc=internal \
@@ -37,7 +54,7 @@ export PATH="$B/ompi/bin:$PATH"
 
 # --- HPL (always from a fresh tree: no recursive `make clean`, which is slow on the network FS)
 rm -rf hpl-$HPL_VER
-[ -f hpl-$HPL_VER.tar.gz ] || curl -fsSL -o hpl-$HPL_VER.tar.gz https://netlib.org/benchmark/hpl/hpl-$HPL_VER.tar.gz
+[ -f hpl-$HPL_VER.tar.gz ] || get hpl-$HPL_VER.tar.gz "$HPL_URL" hpl-$HPL_VER.tar.gz
 tar xzf hpl-$HPL_VER.tar.gz
 cd hpl-$HPL_VER
 cat > Make.soc <<EOF

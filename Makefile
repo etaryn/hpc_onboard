@@ -13,4 +13,9 @@ run: all
 clean:
 	rm -rf build
 
-.PHONY: all run clean
+# Submission archive: sources + the 3 upstream tarballs (dist/), so `make` needs no internet. Run on the cluster.
+archive:
+	bash scripts/build.sh fetch
+	tar czf hpl-submission.tar.gz --transform 's,^,hpl_onboard/,' Makefile README.md HARDWARE.md RESULTS.md config scripts dist
+
+.PHONY: all run clean archive

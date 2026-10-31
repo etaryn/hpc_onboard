@@ -56,9 +56,8 @@ step E clean-room test, F report. Decide the tarball-bundling question (section 
 ## 6. Open decisions / UNVERIFIED assumptions
 - Rpeak: the 3.55 GHz base clock is from memory of the vendor spec, NOT readable on the node; 32 FLOP/cycle assumes full-rate AVX-512 on
   Zen 5. Say "assumed" in the report; optionally also report % of a boost-clock Rpeak.
-- `make` downloads 3 tarballs at build time (github.com, download.open-mpi.org, netlib.org). If the organizers' login node lacks internet it
-  fails. Option: ship the tarballs in the submission archive (`*.tar.gz` is gitignored; add them to the archive only) and make `build.sh`
-  use them when present. Decide before packaging.
+- DECIDED (Ethan, 2026-10-31): ship the 3 tarballs. `make archive` (on the cluster) runs `build.sh fetch` into `dist/` and writes `hpl-submission.tar.gz`
+  (Makefile README HARDWARE RESULTS config scripts dist; NOT CLAUDE/NOTES/CONTEXT). `build.sh` copies from `dist/` when present, else downloads.
 - Fresh-clone `make` wall time is UNMEASURED (BLIS + Open MPI + HPL; the 60 min srun limit in the Makefile may or may not suffice).
 - `config/HPL.dat` N is provisional. Whether the final run sits on xcni (20 nodes, reliable) or xcnh (4 nodes, probably faster, queue risk)
   is Ethan's call; recommend xcni unless time allows a 1-node xcnh comparison.
