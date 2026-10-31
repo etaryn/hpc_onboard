@@ -26,6 +26,9 @@ assumed 7270.4 Rpeak)** with 16 ranks x 4 threads, 4x4 grid, NB=384, N=46080. **
   HT siblings included) or Open MPI's core binding fails. Partition `normal` max 3 h.
 
 ## 4. Gotchas already paid for (do not re-learn)
+0b. **Multi-node MPI hangs with the default NIC choice** (job 1049115: xhpl at 99.9% CPU, 10 MB RSS, "connect() to 192.168.58.21:1031 failed"). Each node has
+   2 NICs: enp225s0f0np0 = 192.168.48.x/21 (works, hostnames resolve to it) and enp225s0f1np1 = 192.168.58.x/21 (not routable between nodes). Fixed in
+   run_hpl.slurm with `--mca btl_tcp_if_include/oob_tcp_if_include 192.168.48.0/21`. Spot a hang: RUNNING but xhpl RSS ~10 MB.
 0. **QOS `normal` caps each user at cpu=256 running** (`sacctmgr show qos`), i.e. 2 full xcni nodes (128 CPUs each, we must request whole cores incl. HT
    siblings). A 4-node job pends forever with `QOSMaxCpuPerUserLimit`. So the final config is **2 nodes**, not 4 (found 2026-10-31). Always check
    `squeue -u $USER` for strays; one job at a time. 4 nodes x half the cores buys no compute and adds network cost: not worth it.
