@@ -7,7 +7,7 @@ Build pipeline works end to end: `make` builds BLIS 5.0 + Open MPI 4.1.6 + HPL 2
 QOS caps us at 256 CPUs => **2 nodes** (see gotcha 0). Tuned (N=67200 sweeps): 16 ranks/node x 4 threads, grid 2x16 (4x8 and 1x32 slower), NB=384, BCAST=1rM,
 DEPTH=1 (both already best). **Full-size run via `make run`: N=231552, 1074.67 s, 7701.6 GFLOPS, 53.0% of assumed 14540.8 Rpeak, PASSED (run 37, job 1049350).**
 `config/HPL.dat` and `scripts/run.sh` defaults match that run. Remaining: optional small knobs (PFACT/RFACT/NBMIN/SWAP, BLIS_*_NT; expect <2%), then
-step E clean-room test, F report. Decide the tarball-bundling question (section 6) before E.
+step E clean-room test DONE (run 38: archive -> make -> make run, 8309.3 GFLOPS PASSED), F report. Decide the tarball-bundling question (section 6) before E.
 
 ## 2. How to reach the cluster — CLAUDE.md's "ssh soc, key auth, no prompts" is WRONG for this setup
 - The only route is `ssh xlogin` (alias in `~/.ssh/config`, via jump host `stujump`). `stujump` requires key AND password on every login
@@ -58,7 +58,7 @@ step E clean-room test, F report. Decide the tarball-bundling question (section 
   Zen 5. Say "assumed" in the report; optionally also report % of a boost-clock Rpeak.
 - DECIDED (Ethan, 2026-10-31): ship the 3 tarballs. `make archive` (on the cluster) runs `build.sh fetch` into `dist/` and writes `hpl-submission.tar.gz`
   (Makefile README HARDWARE RESULTS config scripts dist; NOT CLAUDE/NOTES/CONTEXT). `build.sh` copies from `dist/` when present, else downloads.
-- Fresh-clone `make` wall time is UNMEASURED (BLIS + Open MPI + HPL; the 60 min srun limit in the Makefile may or may not suffice).
+- Fresh-clone `make` wall time MEASURED: ~3 min (clean-room, run 38). 60 min srun limit is ample.
 - `config/HPL.dat` N is provisional. Whether the final run sits on xcni (20 nodes, reliable) or xcnh (4 nodes, probably faster, queue risk)
   is Ethan's call; recommend xcni unless time allows a 1-node xcnh comparison.
 - Stale cluster state to clean (ask Ethan first): `~/hpc_onboard/build/openmpi-4.1.6/` and `build/openmpi-4.1.6.tar.gz` from the failed first
