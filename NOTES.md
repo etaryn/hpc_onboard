@@ -26,6 +26,9 @@ assumed 7270.4 Rpeak)** with 16 ranks x 4 threads, 4x4 grid, NB=384, N=46080. **
   HT siblings included) or Open MPI's core binding fails. Partition `normal` max 3 h.
 
 ## 4. Gotchas already paid for (do not re-learn)
+0. **QOS `normal` caps each user at cpu=256 running** (`sacctmgr show qos`), i.e. 2 full xcni nodes (128 CPUs each, we must request whole cores incl. HT
+   siblings). A 4-node job pends forever with `QOSMaxCpuPerUserLimit`. So the final config is **2 nodes**, not 4 (found 2026-10-31). Always check
+   `squeue -u $USER` for strays; one job at a time. 4 nodes x half the cores buys no compute and adds network cost: not worth it.
 1. **System Open MPI is broken** here (PMIx 5 segfault under `srun --mpi=pmix`; ORTE session_dir errors; mpirun daemon loss). We build
    Open MPI 4.1.6 with bundled pmix/hwloc/libevent into `build/ompi` and launch with its own `mpirun` inside `sbatch`.
 2. `btl_vader_single_copy_mechanism none`: CMA is blocked (`Read -1, expected N, errno = 1` spam otherwise).
@@ -61,14 +64,15 @@ assumed 7270.4 Rpeak)** with 16 ranks x 4 threads, 4x4 grid, NB=384, N=46080. **
 ## 7. Plan for the next phase (steps in bold need Ethan's OK; every run gets rows in RESULTS.md)
 A. Sanity after the cleanup (1 node, ~1 min): pull, then `NODES=1 HPLDAT=config/tuning/test.dat make run | tail -30`. Expect PASSED with
    the new 16x4 defaults and a `slurm job id:` line. Confirms the cleanup did not break the pipeline.
-B. **First 4-node run** (4 nodes, ~1-3 min per config): `NODES=4 N=92160 CFGS="16 4 8 8;16 4 4 16;8 8 4 8" bash scripts/rt_sweep.sh`.
+B. **First 2-node run** (replaces the 4-node plan, see gotcha 0; ~1-2 min per config): `NODES=2 N=65280 CFGS="16 4 4 8;16 4 2 16;8 8 4 4" bash scripts/rt_sweep.sh`.
+   Ideal = 2 x 3.7 = 7.4 TFLOPS; Rpeak(2 nodes) = 14540.8 (assumed).
    Expect roughly 10-13 TFLOPS if scaling is decent (ideal 4 x 3.7 = 14.8). If communication-bound, check the 10 GbE interface name
    (`ip -br link`) and try `--mca btl_tcp_if_include <iface>`; fewer, fatter ranks also help.
 C. 4-node tuning at N=92160, one variable at a time: best ranks x threads / grid from B, then NB {320,384,448}, then secondary knobs in this
    order: BCAST {1rM,2rM,Lng}, DEPTH {0,1,2}, PFACT/RFACT {C,R,L}, NBMIN/NDIV, SWAP {long,mix}, L1/U, OMP_PROC_BIND close vs spread, BLIS_*_NT.
    Several values of one knob fit in a single HPL.dat (HPL loops over them), so one job per knob. Stop when gains are below the noise
    (~1.5%): CLAUDE.md says not to spend extreme time.
-D. **Full-size run.** N = floor(sqrt(0.80 x 4 x 250 GiB / 8) / NB) x NB = **327,552** for NB=384 (Slurm reports 250G per node; 80% of RAM).
+D. **Full-size run (2 nodes).** N = floor(sqrt(0.80 x 2 x 250 GiB / 8) / NB) x NB = **231,552** for NB=384 (Slurm reports 250G per node; 80% of RAM).
    Estimated 25-35 min, so keep `TLIMIT=02:00:00`. Try 0.85 x RAM only if 0.80 runs clean. Update `config/HPL.dat`, log the run.
 E. Package: final `config/HPL.dat` and the `run.sh` defaults must match the best run. **Clean-room test** on the cluster: `git archive`
    (or the chosen archive, tarballs included) -> unpack in a new temp dir -> `make && make run` in a fresh shell; record the `make` wall

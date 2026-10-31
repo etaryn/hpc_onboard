@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-NODES=${NODES:-4}                       # hard limit: <= 4
+NODES=${NODES:-2}                       # <= 4 by rule; QOS caps us at 256 CPUs = 2 full xcni nodes
 RPN=${RPN:-16}                          # MPI ranks per node; best on 1 node: 16 ranks x 4 threads (64 cores)
 # NB: P x Q in the .dat must equal NODES x RPN. sbatch -c below = 2 x threads = whole cores incl. HT siblings.
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-4}
