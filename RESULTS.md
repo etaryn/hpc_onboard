@@ -45,6 +45,18 @@ Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before ru
 | 38 | 2026-10-31 | 1d723e1 (archive) | 2 (nodes not captured) | 16x4 | 2x16 | 231552 | 384 | CLEAN-ROOM: `make archive` -> unpack in new dir -> `make` from scratch (dead http proxy, dist/ tarballs) -> `make run`; job 1049948, 21:50:59-22:08:12 | 996.07 | 8309.3 | 57.1 | PASSED (1.74806347e-03) | build ~3 min (dir 21:47:53 -> xhpl 21:50:59); login SSH dropped during `make run`, job still COMPLETED; same config as run 37 but +7.9% |
 | 39 | 2026-10-31 | 1d723e1 (archive) | 2 (nodes not captured) | 16x4 | 2x16 | 231552 | 384 | CLEAN-ROOM `make run` alone (nohup) in the unpacked archive; HPL 22:56:36-23:12:44; `time` real 49m14s incl. queue wait | 968.05 | 8549.9 | 58.8 | PASSED (2.00780791e-03) | best score; make run blocked and printed the table; full-size spread over 3 identical runs: 7701.6 / 8309.3 / 8549.9 (11%) |
 
+## Additional user-relayed full-size run
+
+The following result was pasted into chat from SoC. Its build commit and thread
+count were not captured in the pasted HPL output; it is not attributed to the
+local one-node baseline package. The node list and job ID came from the user's
+earlier `squeue` output. Current launcher defaults use 16 ranks/node x 4 threads,
+but the exact thread count for this job remains unconfirmed.
+
+| # | date | commit | nodes | ranks x threads | P x Q | N | NB | other knobs | time (s) | GFLOPS | % Rpeak | PASSED? | notes |
+|---|------|--------|-------|-----------------|-------|---|----|-------------|----------|--------|---------|---------|-------|
+| 40 | 2026-10-31 | not captured | 2 (xcni[2-3]) | 32 total ranks; threads unconfirmed | 2x16 | 231552 | 384 | BCAST=1rM DEPTH=1 PFACT=R RFACT=C NBMIN=4 NDIV=2 SWAP=mix | 1195.30 | 6924.4 | 47.6 (assumed Rpeak) | PASSED (1.70286862e-03) | user-relayed job 1050152; HPL 23:15:31-23:35:26; 1 passed, 0 failed, 0 skipped; existing best score is unchanged |
+
 ## Failed launch attempts (no HPL output; before run #1)
 | what | symptom | cause / fix |
 |---|---|---|
