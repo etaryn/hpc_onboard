@@ -29,6 +29,9 @@ Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before ru
 | 22 | 2026-10-31 | 1b700c7 | 2 (xcni[0-1]) | 16x4 | 4x8 | 65280 | 384 | rt_sweep alone, job 1049243 | 35.52 | 5221.7 | 35.9 | PASSED (2.67250229e-03) | clean rerun of run 19: 4x8 is 11.5% slower than 2x16 (wider is better) |
 | 23 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 8x8 | 4x4 | 65280 | 384 | job 1049195, from the duplicate sweep | 40.18 | 4615.8 | 31.7 | residual not captured | repeat of run 21 (4677.4): 1.3% apart, within noise |
 | 24 | 2026-10-31 | 914bbba | 2 (xcni[0-1]) | 16x4 | 1x32 | 65280 | 384 | rt_sweep alone, job 1049265 | 40.68 | 4559.6 | 31.4 | PASSED (2.41133216e-03) | too flat: grid ranking 2x16 (5900.7) > 4x8 (5221.7) > 1x32 (4559.6) |
+| 25 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 320 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 35.50 | 5698.5 | 39.2 | PASSED (2.22407938e-03) | NB sweep, 3% below 384 |
+| 26 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 34.45 | 5873.4 | 40.4 | PASSED (2.59701323e-03) | best NB again (matches run 20 at N=65280: 5900.7) |
+| 27 | 2026-10-31 | a43550b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 448 | rt_sweep NBS="320 384 448" one job 1049272, 2x16 | 38.87 | 5205.5 | 35.8 | PASSED (2.42581663e-03) | 11% below 384 |
 
 ## Failed launch attempts (no HPL output; before run #1)
 | what | symptom | cause / fix |
