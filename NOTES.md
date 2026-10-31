@@ -3,10 +3,11 @@
 Last updated 2026-10-30. Everything here was verified in-session unless marked UNVERIFIED. Numbers: see RESULTS.md (from logs).
 
 ## 1. Status
-Build pipeline works end to end on the cluster: `make` builds BLIS 5.0 + Open MPI 4.1.6 + HPL 2.3 into `build/`; `make run` submits via
-`sbatch --wait`, blocks, prints the HPL table. 16 single-node runs (xcni) all PASSED. Best 1-node: **3702.8 GFLOPS (50.9% of an
-assumed 7270.4 Rpeak)** with 16 ranks x 4 threads, 4x4 grid, NB=384, N=46080. **No 4-node run has been done yet.** Defaults in
-`scripts/run.sh` and `config/HPL.dat` (N=92160, NB=384, 8x8) are a PROVISIONAL 4-node guess and have not been run since the cleanup.
+Build pipeline works end to end: `make` builds BLIS 5.0 + Open MPI 4.1.6 + HPL 2.3 into `build/`; `make run` submits via `sbatch --wait`, blocks, prints the HPL table.
+QOS caps us at 256 CPUs => **2 nodes** (see gotcha 0). Tuned (N=67200 sweeps): 16 ranks/node x 4 threads, grid 2x16 (4x8 and 1x32 slower), NB=384, BCAST=1rM,
+DEPTH=1 (both already best). **Full-size run via `make run`: N=231552, 1074.67 s, 7701.6 GFLOPS, 53.0% of assumed 14540.8 Rpeak, PASSED (run 37, job 1049350).**
+`config/HPL.dat` and `scripts/run.sh` defaults match that run. Remaining: optional small knobs (PFACT/RFACT/NBMIN/SWAP, BLIS_*_NT; expect <2%), then
+step E clean-room test, F report. Decide the tarball-bundling question (section 6) before E.
 
 ## 2. How to reach the cluster — CLAUDE.md's "ssh soc, key auth, no prompts" is WRONG for this setup
 - The only route is `ssh xlogin` (alias in `~/.ssh/config`, via jump host `stujump`). `stujump` requires key AND password on every login

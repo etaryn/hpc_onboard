@@ -41,6 +41,7 @@ Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before ru
 | 34 | 2026-10-31 | 598d58b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | DEPTH=0; one job 1049337 (WR01C2R4) | 35.67 | 5672.6 | 39.0 | PASSED (2.50091822e-03) | 4.1% below depth 1 |
 | 35 | 2026-10-31 | 598d58b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | DEPTH=1; one job 1049337 (WR11C2R4) | 34.22 | 5912.5 | 40.7 | PASSED (2.32649855e-03) | best; current default (repeat of run 29: 5923.0) |
 | 36 | 2026-10-31 | 598d58b | 2 (xcni[0-1]) | 16x4 | 2x16 | 67200 | 384 | DEPTH=2; one job 1049337 (WR21C2R4) | 34.41 | 5879.8 | 40.4 | PASSED (2.43713653e-03) | within noise of depth 1 |
+| 37 | 2026-10-31 | 9467152 | 2 (xcni[0-1]) | 16x4 | 2x16 | 231552 | 384 | FULL SIZE via `make run`; BCAST=1rM DEPTH=1 PFACT=R RFACT=C NBMIN=4 NDIV=2 SWAP=mix; job 1049350; 19:38:21-19:56:16 | 1074.67 | 7701.6 | 53.0 | PASSED (2.05471566e-03) | current best / candidate final score; N = 80% of 2x250 GiB |
 
 ## Failed launch attempts (no HPL output; before run #1)
 | what | symptom | cause / fix |
