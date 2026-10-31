@@ -23,9 +23,11 @@ Runs 1-16 are all single-node on xcni; Slurm job IDs were not captured before ru
 | 16 | 2026-10-30 | a7c69c9 | 1 (xcni) | 2x32 | 1x2 | 46080 | 384 | ranks x threads sweep; OMP_PLACES=cores PROC_BIND=close; map-by slot:PE=T | 29.12 | 2240.5 | 30.8 | PASSED (4.81312856e-03) | job id not captured |
 | 17 | 2026-10-30 | 7bebd1f | 1 (xcni) | 16x4 | 4x4 | 10000 | 256 | post-cleanup sanity, config/tuning/test.dat via `make run`; job 1041536 | 0.33 | 2022.1 | 27.8 | PASSED (4.08286292e-03) | pipeline OK after cleanup; tiny N, not a score |
 | 18 | 2026-10-31 | 5e2cd60 | 2 (xcni[2-3]) | 16x4 | 4x8 | 65280 | 384 | default NIC selection; job 1049115 | - | - | - | HUNG, cancelled at 25 min | xhpl 99.9% CPU, RSS 10 MB; `connect() to 192.168.58.21:1031 failed`; fixed by 22af5da (pin to 192.168.48.0/21) |
-| 19 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 16x4 | 4x4 (!) | 65280 | 384 | rt_sweep, job 1049194; intended 4x8 | 46.27 | 4008.7 | 27.6 | PASSED (3.44688494e-03) | INVALID config: 4x4 grid on 32 ranks leaves 16 ranks idle (maxrss 36 GB vs 18 GB elsewhere = matrix on one node). Suspected HPL.dat clobber by a second concurrent sweep; UNVERIFIED. Rerun 4x8 |
+| 19 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 16x4 | 4x4 (!) | 65280 | 384 | rt_sweep, job 1049194; intended 4x8 | 46.27 | 4008.7 | 27.6 | PASSED (3.44688494e-03) | INVALID config: 4x4 grid on 32 ranks leaves 16 ranks idle (maxrss 36 GB vs 18 GB elsewhere = matrix on one node). Likely HPL.dat clobbered by a second concurrent sweep (job 1049195 was from it); rerun as run 22 |
 | 20 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 16x4 | 2x16 | 65280 | 384 | rt_sweep, job 1049199; map-by slot:PE=4, OMP close | 31.43 | 5900.7 | 40.6 | PASSED (2.35129699e-03) | first valid 2-node score; 1.59x the 1-node best (3702.8) |
 | 21 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 8x8 | 4x4 | 65280 | 384 | rt_sweep, job 1049203 | 39.65 | 4677.4 | 32.2 | PASSED (3.40056232e-03) | fewer, fatter ranks lose to 16x4 here |
+| 22 | 2026-10-31 | 1b700c7 | 2 (xcni[0-1]) | 16x4 | 4x8 | 65280 | 384 | rt_sweep alone, job 1049243 | 35.52 | 5221.7 | 35.9 | PASSED (2.67250229e-03) | clean rerun of run 19: 4x8 is 11.5% slower than 2x16 (wider is better) |
+| 23 | 2026-10-31 | 22af5da | 2 (xcni[0-1]) | 8x8 | 4x4 | 65280 | 384 | job 1049195, from the duplicate sweep | 40.18 | 4615.8 | 31.7 | residual not captured | repeat of run 21 (4677.4): 1.3% apart, within noise |
 
 ## Failed launch attempts (no HPL output; before run #1)
 | what | symptom | cause / fix |
